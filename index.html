@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Royal Stay Hotel</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🏨 Royal Stay Hotel</h1>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#rooms">Rooms</a>
+            <a href="#booking">Booking</a>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <h2>Welcome to Royal Stay</h2>
+        <p>Experience comfort, luxury, and unforgettable moments.</p>
+
+        <button onclick="scrollToBooking()">
+            Book Your Stay
+        </button>
+    </section>
+
+    <section id="rooms" class="rooms">
+        <h2>Our Rooms</h2>
+
+        <div class="room-container">
+
+            <div class="room-card">
+                <h3>Single Room</h3>
+                <p>Perfect for solo travelers.</p>
+                <h4>₹1,500 / Night</h4>
+                <button onclick="selectRoom('Single Room')">
+                    Book Now
+                </button>
+            </div>
+
+            <div class="room-card">
+                <h3>Double Room</h3>
+                <p>Comfortable room for two guests.</p>
+                <h4>₹2,500 / Night</h4>
+                <button onclick="selectRoom('Double Room')">
+                    Book Now
+                </button>
+            </div>
+
+            <div class="room-card">
+                <h3>Luxury Suite</h3>
+                <p>Enjoy our premium luxury suite.</p>
+                <h4>₹5,000 / Night</h4>
+                <button onclick="selectRoom('Luxury Suite')">
+                    Book Now
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="booking" class="booking">
+
+        <h2>Book Your Room</h2>
+
+        <form onsubmit="bookRoom(event)">
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Your Name"
+                required
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Your Email"
+                required
+            >
+
+            <select id="room" required>
+                <option value="">Select Room</option>
+                <option value="Single Room">Single Room</option>
+                <option value="Double Room">Double Room</option>
+                <option value="Luxury Suite">Luxury Suite</option>
+            </select>
+
+            <input
+                type="date"
+                id="date"
+                required
+            >
+
+            <button type="submit">
+                Confirm Booking
+            </button>
+
+        </form>
+
+        <p id="message"></p>
+
+    </section>
+
+    <footer>
+        <p>© 2026 Royal Stay Hotel</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
