@@ -1,117 +1,809 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Allen</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style.css">
+    <title>StayEase | Find Your Perfect Stay</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
+
 <body>
 
-    <header>
-        <h1>🏨 Royal Stay Hotel</h1>
+<!-- NAVBAR -->
 
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#rooms">Rooms</a>
-            <a href="#booking">Booking</a>
-        </nav>
-    </header>
+<header class="navbar">
 
-    <section id="home" class="hero">
-        <h2>Welcome to Royal Stay</h2>
-        <p>Experience comfort, luxury, and unforgettable moments.</p>
+    <div class="logo">
+        <i class="fa-solid fa-hotel"></i>
+        Stay<span>Ease</span>
+    </div>
 
-        <button onclick="scrollToBooking()">
-            Book Your Stay
+    <nav id="navMenu">
+        <a href="#home">Home</a>
+        <a href="#hotels">Hotels</a>
+        <a href="#features">Why Us</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+
+        <button id="themeToggle" class="icon-btn">
+            <i class="fa-solid fa-moon"></i>
         </button>
-    </section>
 
-    <section id="rooms" class="rooms">
-        <h2>Our Rooms</h2>
+        <button class="login-btn" onclick="showLogin()">
+            <i class="fa-solid fa-user"></i>
+            Sign In
+        </button>
 
-        <div class="room-container">
+        <button class="menu-btn" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-            <div class="room-card">
-                <h3>Single Room</h3>
-                <p>Perfect for solo travelers.</p>
-                <h4>₹1,500 / Night</h4>
-                <button onclick="selectRoom('Single Room')">
-                    Book Now
-                </button>
+    </div>
+
+</header>
+
+
+<!-- HERO SECTION -->
+
+<section class="hero" id="home">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <span class="hero-tag">
+            <i class="fa-solid fa-star"></i>
+            Your journey starts here
+        </span>
+
+        <h1>
+            Find Your Perfect<br>
+            <span>Stay Anywhere.</span>
+        </h1>
+
+        <p>
+            Discover beautiful hotels, amazing destinations,
+            and unforgettable experiences.
+        </p>
+
+        <!-- SEARCH BOX -->
+
+        <div class="search-box">
+
+            <div class="search-item">
+
+                <i class="fa-solid fa-location-dot"></i>
+
+                <div>
+                    <label>Location</label>
+                    <input
+                        type="text"
+                        id="location"
+                        placeholder="Where are you going?">
+                </div>
+
             </div>
 
-            <div class="room-card">
-                <h3>Double Room</h3>
-                <p>Comfortable room for two guests.</p>
-                <h4>₹2,500 / Night</h4>
-                <button onclick="selectRoom('Double Room')">
-                    Book Now
-                </button>
+            <div class="search-item">
+
+                <i class="fa-regular fa-calendar"></i>
+
+                <div>
+                    <label>Check-in</label>
+                    <input
+                        type="date"
+                        id="checkin">
+                </div>
+
             </div>
 
-            <div class="room-card">
-                <h3>Luxury Suite</h3>
-                <p>Enjoy our premium luxury suite.</p>
-                <h4>₹5,000 / Night</h4>
-                <button onclick="selectRoom('Luxury Suite')">
-                    Book Now
+            <div class="search-item">
+
+                <i class="fa-regular fa-calendar-check"></i>
+
+                <div>
+                    <label>Check-out</label>
+                    <input
+                        type="date"
+                        id="checkout">
+                </div>
+
+            </div>
+
+            <div class="search-item">
+
+                <i class="fa-solid fa-users"></i>
+
+                <div>
+                    <label>Guests</label>
+                    <select id="guests">
+                        <option value="1">1 Guest</option>
+                        <option value="2" selected>2 Guests</option>
+                        <option value="3">3 Guests</option>
+                        <option value="4">4 Guests</option>
+                        <option value="5">5+ Guests</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button class="search-btn"
+                    onclick="searchHotels()">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- STATS -->
+
+<section class="stats">
+
+    <div>
+        <i class="fa-solid fa-hotel"></i>
+        <h3>2,500+</h3>
+        <p>Premium Hotels</p>
+    </div>
+
+    <div>
+        <i class="fa-solid fa-earth-americas"></i>
+        <h3>120+</h3>
+        <p>Destinations</p>
+    </div>
+
+    <div>
+        <i class="fa-solid fa-users"></i>
+        <h3>50K+</h3>
+        <p>Happy Travelers</p>
+    </div>
+
+    <div>
+        <i class="fa-solid fa-shield-halved"></i>
+        <h3>100%</h3>
+        <p>Secure Booking</p>
+    </div>
+
+</section>
+
+
+<!-- HOTEL SECTION -->
+
+<section class="hotels-section" id="hotels">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="small-title">EXPLORE YOUR STAY</span>
+
+            <h2>Popular Hotels</h2>
+
+            <p>
+                Discover handpicked hotels designed
+                for unforgettable experiences.
+            </p>
+        </div>
+
+        <button class="view-btn"
+                onclick="showAllHotels()">
+
+            View All
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+        <button class="filter active"
+                onclick="filterHotels('all', this)">
+            All
+        </button>
+
+        <button class="filter"
+                onclick="filterHotels('luxury', this)">
+            Luxury
+        </button>
+
+        <button class="filter"
+                onclick="filterHotels('budget', this)">
+            Budget Friendly
+        </button>
+
+        <button class="filter"
+                onclick="filterHotels('resort', this)">
+            Resorts
+        </button>
+
+    </div>
+
+
+    <!-- HOTEL CARDS -->
+
+    <div class="hotel-grid" id="hotelGrid">
+
+        <!-- CARD 1 -->
+
+        <div class="hotel-card"
+             data-category="luxury"
+             data-location="dubai">
+
+            <div class="hotel-image">
+
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=85"
+                     alt="Luxury hotel">
+
+                <span class="badge">Top Rated</span>
+
+                <button class="heart"
+                        onclick="toggleFavorite(this)">
+
+                    <i class="fa-regular fa-heart"></i>
+
                 </button>
+
+            </div>
+
+            <div class="hotel-info">
+
+                <div class="hotel-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Dubai, UAE
+                </div>
+
+                <h3>Grand Horizon Hotel</h3>
+
+                <p class="description">
+                    Luxury rooms with stunning city views
+                    and premium facilities.
+                </p>
+
+                <div class="hotel-rating">
+
+                    <span class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        4.9
+                    </span>
+
+                    <span class="reviews">
+                        128 Reviews
+                    </span>
+
+                </div>
+
+                <div class="hotel-bottom">
+
+                    <div class="price">
+                        <strong>$180</strong>
+                        <span>/night</span>
+                    </div>
+
+                    <button class="book-btn"
+                            onclick="bookHotel('Grand Horizon Hotel')">
+
+                        Book Now
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
             </div>
 
         </div>
-    </section>
 
-    <section id="booking" class="booking">
 
-        <h2>Book Your Room</h2>
+        <!-- CARD 2 -->
 
-        <form onsubmit="bookRoom(event)">
+        <div class="hotel-card"
+             data-category="resort"
+             data-location="bali">
 
-            <input
-                type="text"
-                id="name"
-                placeholder="Your Name"
-                required
-            >
+            <div class="hotel-image">
 
-            <input
-                type="email"
-                id="email"
-                placeholder="Your Email"
-                required
-            >
+                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=85"
+                     alt="Beach resort">
 
-            <select id="room" required>
-                <option value="">Select Room</option>
-                <option value="Single Room">Single Room</option>
-                <option value="Double Room">Double Room</option>
-                <option value="Luxury Suite">Luxury Suite</option>
-            </select>
+                <span class="badge">Popular</span>
 
-            <input
-                type="date"
-                id="date"
-                required
-            >
+                <button class="heart"
+                        onclick="toggleFavorite(this)">
 
-            <button type="submit">
-                Confirm Booking
-            </button>
+                    <i class="fa-regular fa-heart"></i>
 
-        </form>
+                </button>
 
-        <p id="message"></p>
+            </div>
 
-    </section>
+            <div class="hotel-info">
 
-    <footer>
-        <p>© 2026 Royal Stay Hotel</p>
-    </footer>
+                <div class="hotel-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Bali, Indonesia
+                </div>
 
-    <script src="script.js"></script>
+                <h3>Ocean Breeze Resort</h3>
+
+                <p class="description">
+                    Relax in a beautiful tropical resort
+                    surrounded by nature.
+                </p>
+
+                <div class="hotel-rating">
+
+                    <span class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        4.8
+                    </span>
+
+                    <span class="reviews">
+                        96 Reviews
+                    </span>
+
+                </div>
+
+                <div class="hotel-bottom">
+
+                    <div class="price">
+                        <strong>$145</strong>
+                        <span>/night</span>
+                    </div>
+
+                    <button class="book-btn"
+                            onclick="bookHotel('Ocean Breeze Resort')">
+
+                        Book Now
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CARD 3 -->
+
+        <div class="hotel-card"
+             data-category="budget"
+             data-location="paris">
+
+            <div class="hotel-image">
+
+                <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=900&q=85"
+                     alt="Modern hotel">
+
+                <span class="badge">Best Value</span>
+
+                <button class="heart"
+                        onclick="toggleFavorite(this)">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </button>
+
+            </div>
+
+            <div class="hotel-info">
+
+                <div class="hotel-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Paris, France
+                </div>
+
+                <h3>Urban Comfort Hotel</h3>
+
+                <p class="description">
+                    Affordable rooms with modern amenities
+                    in the heart of the city.
+                </p>
+
+                <div class="hotel-rating">
+
+                    <span class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        4.7
+                    </span>
+
+                    <span class="reviews">
+                        74 Reviews
+                    </span>
+
+                </div>
+
+                <div class="hotel-bottom">
+
+                    <div class="price">
+                        <strong>$95</strong>
+                        <span>/night</span>
+                    </div>
+
+                    <button class="book-btn"
+                            onclick="bookHotel('Urban Comfort Hotel')">
+
+                        Book Now
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CARD 4 -->
+
+        <div class="hotel-card"
+             data-category="luxury"
+             data-location="singapore">
+
+            <div class="hotel-image">
+
+                <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=900&q=85"
+                     alt="Luxury resort">
+
+                <span class="badge">Luxury</span>
+
+                <button class="heart"
+                        onclick="toggleFavorite(this)">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </button>
+
+            </div>
+
+            <div class="hotel-info">
+
+                <div class="hotel-location">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Singapore
+                </div>
+
+                <h3>Skyline Grand Hotel</h3>
+
+                <p class="description">
+                    Enjoy elegant rooms and breathtaking
+                    skyline views.
+                </p>
+
+                <div class="hotel-rating">
+
+                    <span class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        4.9
+                    </span>
+
+                    <span class="reviews">
+                        210 Reviews
+                    </span>
+
+                </div>
+
+                <div class="hotel-bottom">
+
+                    <div class="price">
+                        <strong>$220</strong>
+                        <span>/night</span>
+                    </div>
+
+                    <button class="book-btn"
+                            onclick="bookHotel('Skyline Grand Hotel')">
+
+                        Book Now
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <p id="noResults" class="no-results">
+        No hotels found. Try another search.
+    </p>
+
+</section>
+
+
+<!-- WHY CHOOSE US -->
+
+<section class="features-section" id="features">
+
+    <div class="section-heading center">
+
+        <span class="small-title">WHY STAYEASE?</span>
+
+        <h2>Travel With Confidence</h2>
+
+        <p>
+            Everything you need for a comfortable
+            and memorable journey.
+        </p>
+
+    </div>
+
+
+    <div class="features-grid">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <h3>Secure Booking</h3>
+
+            <p>
+                Your personal information is protected
+                with secure booking technology.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+
+            <h3>Best Prices</h3>
+
+            <p>
+                Find comfortable stays at competitive
+                prices for every budget.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+
+            <h3>24/7 Support</h3>
+
+            <p>
+                Our support team is here to help
+                whenever you need assistance.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+
+            <h3>Trusted Experiences</h3>
+
+            <p>
+                Explore stays selected for comfort,
+                convenience, and quality.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- NEWSLETTER -->
+
+<section class="newsletter">
+
+    <div>
+
+        <span class="small-title">GET TRAVEL INSPIRATION</span>
+
+        <h2>Make Your Next Trip Amazing ✈️</h2>
+
+        <p>
+            Subscribe for travel inspiration and hotel updates.
+        </p>
+
+    </div>
+
+    <form onsubmit="subscribe(event)">
+
+        <input type="email"
+               id="email"
+               placeholder="Enter your email address"
+               required>
+
+        <button type="submit">
+            Subscribe
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer id="contact">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+
+            <div class="logo">
+                <i class="fa-solid fa-hotel"></i>
+                Stay<span>Ease</span>
+            </div>
+
+            <p>
+                Making every journey comfortable,
+                memorable, and effortless.
+            </p>
+
+            <div class="social-icons">
+
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <h4>Company</h4>
+
+            <a href="#home">About Us</a>
+            <a href="#hotels">Our Hotels</a>
+            <a href="#features">Why Us</a>
+            <a href="#contact">Contact</a>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <h4>Support</h4>
+
+            <a href="#">Help Center</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">FAQs</a>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2026 StayEase. All rights reserved.
+
+    </div>
+
+</footer>
+
+
+<!-- LOGIN MODAL -->
+
+<div class="modal" id="loginModal">
+
+    <div class="modal-content">
+
+        <button class="close-btn"
+                onclick="closeModal('loginModal')">
+            &times;
+        </button>
+
+        <i class="fa-solid fa-hotel modal-icon"></i>
+
+        <h2>Welcome Back!</h2>
+
+        <p>Sign in to continue your journey.</p>
+
+        <input type="email"
+               placeholder="Email address">
+
+        <input type="password"
+               placeholder="Password">
+
+        <button class="modal-submit"
+                onclick="loginMessage()">
+            Sign In
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- BOOKING MODAL -->
+
+<div class="modal" id="bookingModal">
+
+    <div class="modal-content">
+
+        <button class="close-btn"
+                onclick="closeModal('bookingModal')">
+            &times;
+        </button>
+
+        <i class="fa-solid fa-calendar-check modal-icon"></i>
+
+        <h2>Book Your Stay</h2>
+
+        <p id="selectedHotel"></p>
+
+        <input type="text"
+               id="guestName"
+               placeholder="Your name">
+
+        <input type="email"
+               id="guestEmail"
+               placeholder="Your email">
+
+        <button class="modal-submit"
+                onclick="confirmBooking()">
+
+            Confirm Booking
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div id="toast" class="toast"></div>
+
+
+<script src="script.js"></script>
 
 </body>
+
 </html>
