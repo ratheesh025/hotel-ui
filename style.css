@@ -1601,11 +1601,7 @@ body.dark .newsletter {
         display: block;
     }
 
-    .login-btn {
-        padding: 10px 13px;
-
-        font-size: 11px;
-    }
+ 
 
     .hero {
         min-height: 760px;
