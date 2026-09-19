@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 
-name: Hotel UI Deployment
-=======
-```yaml
 name: Hotel UI - CI/CD Pipeline
->>>>>>> d5e96b0 (test-git)
-
 on:
   push:
     branches:
@@ -13,50 +7,24 @@ on:
 
 jobs:
 
-<<<<<<< HEAD
-  build:
-    name: Build Docker Image
-=======
   # ==========================================
   # 1. CI - Build and Push Docker Image
   # ==========================================
   build-and-push:
     name: Build and Push Docker Image
->>>>>>> d5e96b0 (test-git)
     runs-on: ubuntu-latest
 
     steps:
 
-<<<<<<< HEAD
-      - name: Get Source Code
-        uses: actions/checkout@v4
-
-      - name: Docker Hub Login
-=======
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Login to Docker Hub
->>>>>>> d5e96b0 (test-git)
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-<<<<<<< HEAD
-      - name: Build Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest .
-
-      - name: Push Image
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest
-
-
-  deploy:
-    name: Kubernetes Deployment
-    needs: build
-=======
       - name: Build Docker Image
         run: |
           docker build \
@@ -84,16 +52,10 @@ jobs:
     name: Deploy Hotel UI to Kubernetes
     needs: build-and-push
 
->>>>>>> d5e96b0 (test-git)
     runs-on: [self-hosted, Linux, X64]
 
     steps:
 
-<<<<<<< HEAD
-      - name: Check Runner
-        run: |
-          echo "Runner Host:"
-=======
       # ------------------------------------------
       # Checkout Code
       # ------------------------------------------
@@ -111,29 +73,11 @@ jobs:
           echo "================================="
 
           echo "Runner Hostname:"
->>>>>>> d5e96b0 (test-git)
           hostname
 
           echo "Runner User:"
           whoami
 
-<<<<<<< HEAD
-      - name: Check Kubernetes
-        run: |
-          kubectl get nodes
-          kubectl get pods -n frontend
-
-      - name: Deploy Application
-        run: |
-          kubectl set image deployment/user-ui \
-            user-ui=${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest \
-            -n frontend
-
-      - name: Restart Deployment
-        run: |
-          kubectl rollout restart deployment/user-ui -n frontend
-
-=======
           echo "Docker Version:"
           docker --version
 
@@ -172,15 +116,12 @@ jobs:
       # ------------------------------------------
       # Wait for Rollout
       # ------------------------------------------
->>>>>>> d5e96b0 (test-git)
       - name: Wait for Deployment
         run: |
           kubectl rollout status deployment/user-ui \
             -n frontend \
             --timeout=120s
 
-<<<<<<< HEAD
-=======
 
       # ------------------------------------------
       # Verify Deployment
@@ -220,4 +161,3 @@ jobs:
           echo "Deployment Successful"
           echo "================================="
 ```
->>>>>>> d5e96b0 (test-git)
