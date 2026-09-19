@@ -1,5 +1,5 @@
 
-name: Hotel UI CI/CD
+name: Hotel UI Deployment
 
 on:
   push:
@@ -8,117 +8,78 @@ on:
 
 jobs:
 
-  # ==============================
-  # 1. Build and Push Docker Image
-  # ==============================
   build:
-    name: Build and Push Docker Image
+    name: Build Docker Image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+
+      - name: Get Source Code
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
+      - name: Docker Hub Login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Build Docker Image
+      - name: Build Image
         run: |
-          docker build \
-            -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest .
 
-      - name: Push Docker Image
+      - name: Push Image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest
 
-      - name: Show Image
-        run: |
-          echo "Docker image pushed successfully"
-          echo "${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }}"
 
-
-  # ==============================
-  # 2. Deploy to Kubernetes
-  # ==============================
   deploy:
-    name: Deploy to Kubernetes
+    name: Kubernetes Deployment
     needs: build
-
     runs-on: [self-hosted, Linux, X64]
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
 
       - name: Check Runner
         run: |
-          echo "Runner:"
+          echo "Runner Host:"
           hostname
 
-          echo "User:"
+          echo "Runner User:"
           whoami
-
-          echo "Docker:"
-          docker --version
-
-          echo "Kubectl:"
-          kubectl version --client
 
       - name: Check Kubernetes
         run: |
-          echo "Kubernetes Nodes:"
           kubectl get nodes
-
-          echo "Frontend Namespace:"
           kubectl get pods -n frontend
 
-      - name: Update Deployment Image
+      - name: Deploy Application
         run: |
           kubectl set image deployment/user-ui \
-            user-ui=${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }} \
+            user-ui=${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest \
             -n frontend
 
-      - name: Wait for Rollout
+      - name: Restart Deployment
+        run: |
+          kubectl rollout restart deployment/user-ui -n frontend
+
+      - name: Wait for Deployment
         run: |
           kubectl rollout status deployment/user-ui \
             -n frontend \
             --timeout=120s
 
-      - name: Verify Deployment
+      - name: Check Final Status
         run: |
-          echo "================================="
-          echo "Deployment"
-          echo "================================="
-
-          kubectl get deployment user-ui -n frontend
-
-          echo "================================="
-          echo "Pods"
-          echo "================================="
-
+          echo "=============================="
+          echo "PODS"
+          echo "=============================="
           kubectl get pods -n frontend
 
-          echo "================================="
-          echo "Service"
-          echo "================================="
-
+          echo "=============================="
+          echo "SERVICE"
+          echo "=============================="
           kubectl get svc user-ui -n frontend
 
-          echo "================================="
-          echo "Current Image"
-          echo "================================="
-
-          kubectl get deployment user-ui \
-            -n frontend \
-            -o jsonpath='{.spec.template.spec.containers[0].image}'
-
-          echo
-          echo "================================="
-          echo "CI/CD Deployment Successful"
-          echo "================================="
-```
+          echo "=============================="
+          echo "DEPLOYMENT COMPLETE"
+          echo "===========
