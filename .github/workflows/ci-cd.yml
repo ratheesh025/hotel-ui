@@ -68,18 +68,3 @@ jobs:
             -n frontend \
             --timeout=120s
 
-      - name: Check Final Status
-        run: |
-          echo "=============================="
-          echo "PODS"
-          echo "=============================="
-          kubectl get pods -n frontend
-
-          echo "=============================="
-          echo "SERVICE"
-          echo "=============================="
-          kubectl get svc user-ui -n frontend
-
-          echo "=============================="
-          echo "DEPLOYMENT COMPLETE"
-          echo "===========
