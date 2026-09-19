@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 
 name: Hotel UI Deployment
+=======
+```yaml
+name: Hotel UI - CI/CD Pipeline
+>>>>>>> d5e96b0 (test-git)
 
 on:
   push:
@@ -8,21 +13,37 @@ on:
 
 jobs:
 
+<<<<<<< HEAD
   build:
     name: Build Docker Image
+=======
+  # ==========================================
+  # 1. CI - Build and Push Docker Image
+  # ==========================================
+  build-and-push:
+    name: Build and Push Docker Image
+>>>>>>> d5e96b0 (test-git)
     runs-on: ubuntu-latest
 
     steps:
 
+<<<<<<< HEAD
       - name: Get Source Code
         uses: actions/checkout@v4
 
       - name: Docker Hub Login
+=======
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+>>>>>>> d5e96b0 (test-git)
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
+<<<<<<< HEAD
       - name: Build Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest .
@@ -35,18 +56,68 @@ jobs:
   deploy:
     name: Kubernetes Deployment
     needs: build
+=======
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/hotel-ui:latest
+
+      - name: Build Complete
+        run: |
+          echo "================================="
+          echo "Docker Build and Push Completed"
+          echo "================================="
+          echo "Image:"
+          echo "${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }}"
+
+
+  # ==========================================
+  # 2. CD - Deploy to Kubernetes
+  # ==========================================
+  deploy:
+    name: Deploy Hotel UI to Kubernetes
+    needs: build-and-push
+
+>>>>>>> d5e96b0 (test-git)
     runs-on: [self-hosted, Linux, X64]
 
     steps:
 
+<<<<<<< HEAD
       - name: Check Runner
         run: |
           echo "Runner Host:"
+=======
+      # ------------------------------------------
+      # Checkout Code
+      # ------------------------------------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+
+      # ------------------------------------------
+      # Check Runner
+      # ------------------------------------------
+      - name: Check Self-Hosted Runner
+        run: |
+          echo "================================="
+          echo "Self-Hosted Runner"
+          echo "================================="
+
+          echo "Runner Hostname:"
+>>>>>>> d5e96b0 (test-git)
           hostname
 
           echo "Runner User:"
           whoami
 
+<<<<<<< HEAD
       - name: Check Kubernetes
         run: |
           kubectl get nodes
@@ -62,9 +133,91 @@ jobs:
         run: |
           kubectl rollout restart deployment/user-ui -n frontend
 
+=======
+          echo "Docker Version:"
+          docker --version
+
+          echo "Kubectl Version:"
+          kubectl version --client
+
+
+      # ------------------------------------------
+      # Check Kubernetes Cluster
+      # ------------------------------------------
+      - name: Check Kubernetes Cluster
+        run: |
+          echo "================================="
+          echo "Kubernetes Nodes"
+          echo "================================="
+
+          kubectl get nodes
+
+          echo "================================="
+          echo "Frontend Namespace"
+          echo "================================="
+
+          kubectl get pods -n frontend
+
+
+      # ------------------------------------------
+      # Update Kubernetes Deployment
+      # ------------------------------------------
+      - name: Deploy New Image
+        run: |
+          kubectl set image deployment/user-ui \
+            user-ui=${{ secrets.DOCKER_USERNAME }}/hotel-ui:${{ github.sha }} \
+            -n frontend
+
+
+      # ------------------------------------------
+      # Wait for Rollout
+      # ------------------------------------------
+>>>>>>> d5e96b0 (test-git)
       - name: Wait for Deployment
         run: |
           kubectl rollout status deployment/user-ui \
             -n frontend \
             --timeout=120s
 
+<<<<<<< HEAD
+=======
+
+      # ------------------------------------------
+      # Verify Deployment
+      # ------------------------------------------
+      - name: Verify Deployment
+        run: |
+          echo "================================="
+          echo "Deployment"
+          echo "================================="
+
+          kubectl get deployment user-ui -n frontend
+
+          echo "================================="
+          echo "Pods"
+          echo "================================="
+
+          kubectl get pods \
+            -n frontend \
+            -l app=user-ui
+
+          echo "================================="
+          echo "Service"
+          echo "================================="
+
+          kubectl get svc user-ui -n frontend
+
+          echo "================================="
+          echo "Current Image"
+          echo "================================="
+
+          kubectl get deployment user-ui \
+            -n frontend \
+            -o jsonpath='{.spec.template.spec.containers[0].image}'
+
+          echo
+          echo "================================="
+          echo "Deployment Successful"
+          echo "================================="
+```
+>>>>>>> d5e96b0 (test-git)
