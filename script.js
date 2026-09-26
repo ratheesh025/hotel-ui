@@ -1,3 +1,24 @@
+
+/* =========================
+   BACKEND API
+========================= */
+
+const API_URL = "http://localhost:8000/api";
+
+
+/* =========================
+   PAGE LOAD
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    loadRooms();
+
+    checkLogin();
+
+});
+
+
 /* =========================
    MOBILE MENU
 ========================= */
@@ -12,254 +33,253 @@ function toggleMenu() {
 
 
 /* =========================
-   DARK MODE
+   SCROLL TO ROOMS
 ========================= */
 
-const themeToggle = document.getElementById("themeToggle");
+function scrollToRooms() {
 
-themeToggle.addEventListener("click", function () {
-
-    document.body.classList.toggle("dark");
-
-    const icon = themeToggle.querySelector("i");
-
-    if (document.body.classList.contains("dark")) {
-
-        icon.classList.remove("fa-moon");
-        icon.classList.add("fa-sun");
-
-        localStorage.setItem("theme", "dark");
-
-    } else {
-
-        icon.classList.remove("fa-sun");
-        icon.classList.add("fa-moon");
-
-        localStorage.setItem("theme", "light");
-
-    }
-
-});
-
-
-/* RESTORE THEME */
-
-if (localStorage.getItem("theme") === "dark") {
-
-    document.body.classList.add("dark");
-
-    themeToggle.querySelector("i").classList.remove("fa-moon");
-
-    themeToggle.querySelector("i").classList.add("fa-sun");
-
-}
-
-
-/* =========================
-   HOTEL FILTER
-========================= */
-
-function filterHotels(category, button) {
-
-    const cards = document.querySelectorAll(".hotel-card");
-
-    const buttons = document.querySelectorAll(".filter");
-
-    buttons.forEach(btn => {
-        btn.classList.remove("active");
-    });
-
-    button.classList.add("active");
-
-    let visibleCount = 0;
-
-    cards.forEach(card => {
-
-        if (
-            category === "all" ||
-            card.dataset.category === category
-        ) {
-
-            card.style.display = "block";
-            visibleCount++;
-
-        } else {
-
-            card.style.display = "none";
-
-        }
-
-    });
-
-    document.getElementById("noResults").style.display =
-        visibleCount === 0 ? "block" : "none";
-
-}
-
-
-/* =========================
-   FAVORITE BUTTON
-========================= */
-
-function toggleFavorite(button) {
-
-    button.classList.toggle("favorited");
-
-    const icon = button.querySelector("i");
-
-    if (button.classList.contains("favorited")) {
-
-        icon.classList.remove("fa-regular");
-        icon.classList.add("fa-solid");
-
-        showToast("❤️ Added to your favorites");
-
-    } else {
-
-        icon.classList.remove("fa-solid");
-        icon.classList.add("fa-regular");
-
-        showToast("Removed from favorites");
-
-    }
-
-}
-
-
-/* =========================
-   HOTEL SEARCH
-========================= */
-
-function searchHotels() {
-
-    const location = document
-        .getElementById("location")
-        .value
-        .trim()
-        .toLowerCase();
-
-    const checkin = document.getElementById("checkin").value;
-
-    const checkout = document.getElementById("checkout").value;
-
-    if (checkin && checkout && checkout <= checkin) {
-
-        showToast("Check-out must be after check-in.");
-
-        return;
-
-    }
-
-    const cards = document.querySelectorAll(".hotel-card");
-
-    let count = 0;
-
-    cards.forEach(card => {
-
-        const hotelLocation = card.dataset.location;
-
-        const locationText = card
-            .querySelector(".hotel-location")
-            .textContent
-            .toLowerCase();
-
-        if (
-            !location ||
-            hotelLocation.includes(location) ||
-            locationText.includes(location)
-        ) {
-
-            card.style.display = "block";
-            count++;
-
-        } else {
-
-            card.style.display = "none";
-
-        }
-
-    });
-
-    document.getElementById("noResults").style.display =
-        count === 0 ? "block" : "none";
-
-    document.getElementById("hotels").scrollIntoView({
+    document.getElementById("rooms").scrollIntoView({
         behavior: "smooth"
     });
 
-    showToast(
-        count > 0
-            ? `Found ${count} hotel(s) for your search`
-            : "No matching hotels found"
-    );
-
 }
 
 
 /* =========================
-   VIEW ALL HOTELS
+   LOAD ROOMS
 ========================= */
 
-function showAllHotels() {
+async function loadRooms() {
 
-    const cards = document.querySelectorAll(".hotel-card");
+    const container = document.getElementById("roomsContainer");
 
-    cards.forEach(card => {
-        card.style.display = "block";
-    });
+    container.innerHTML = `
+        <div class="loading">
+            Loading rooms...
+        </div>
+    `;
 
-    document.getElementById("noResults").style.display = "none";
+    try {
 
-    document.querySelectorAll(".filter").forEach(btn => {
-        btn.classList.remove("active");
-    });
+        const response = await fetch(`${API_URL}/rooms`);
 
-    document.querySelector(".filter").classList.add("active");
+        const data = await response.json();
 
-    showToast("Showing all available hotels");
+        console.log("Rooms API:", data);
 
-}
+        if (!response.ok || !data.success) {
 
+            throw new Error(
+                data.message || "Failed to load rooms"
+            );
 
-/* =========================
-   BOOK HOTEL
-========================= */
+        }
 
-function bookHotel(hotelName) {
+        displayRooms(data.rooms || data.data || []);
 
-    document.getElementById("selectedHotel").textContent =
-        "You are booking: " + hotelName;
+    } catch (error) {
 
-    document.getElementById("bookingModal").classList.add("show");
+        console.error("Room loading error:", error);
 
-}
-
-
-/* =========================
-   CONFIRM BOOKING
-========================= */
-
-function confirmBooking() {
-
-    const name = document.getElementById("guestName").value.trim();
-
-    const email = document.getElementById("guestEmail").value.trim();
-
-    if (!name || !email) {
-
-        showToast("Please enter your name and email.");
-
-        return;
+        container.innerHTML = `
+            <div class="loading">
+                <h3>Unable to load rooms</h3>
+                <p>Make sure the backend is running on port 8000.</p>
+            </div>
+        `;
 
     }
 
-    closeModal("bookingModal");
+}
 
-    showToast("🎉 Booking request submitted successfully!");
 
-    document.getElementById("guestName").value = "";
+/* =========================
+   DISPLAY ROOMS
+========================= */
 
-    document.getElementById("guestEmail").value = "";
+function displayRooms(rooms) {
+
+    const container =
+        document.getElementById("roomsContainer");
+
+    if (!rooms.length) {
+
+        container.innerHTML = `
+            <div class="loading">
+                <h3>No rooms found</h3>
+                <p>Please check your database.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = rooms.map(room => {
+
+        const image =
+            room.image ||
+            room.imageUrl ||
+            "https://images.unsplash.com/photo-1566665797739-1674de7a421a";
+
+        const name =
+            room.name ||
+            room.title ||
+            room.roomType ||
+            "Hotel Room";
+
+        const type =
+            room.type ||
+            room.roomType ||
+            "Room";
+
+        const location =
+            room.location ||
+            room.city ||
+            "India";
+
+        const description =
+            room.description ||
+            "Comfortable room for your stay.";
+
+        const price =
+            room.price ||
+            room.pricePerNight ||
+            0;
+
+        return `
+
+            <div class="room-card">
+
+                <img
+                    class="room-image"
+                    src="${image}"
+                    alt="${name}"
+                >
+
+                <div class="room-info">
+
+                    <span class="room-type">
+                        ${type}
+                    </span>
+
+                    <h3>
+                        ${name}
+                    </h3>
+
+                    <div class="room-location">
+                        📍 ${location}
+                    </div>
+
+                    <p class="room-description">
+                        ${description}
+                    </p>
+
+                    <div class="room-bottom">
+
+                        <div class="room-price">
+                            ₹${price}
+                            <small>/ night</small>
+                        </div>
+
+                        <button
+                            class="book-btn"
+                            onclick='openBooking(${JSON.stringify(room)})'>
+                            Book Now
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   SEARCH ROOMS
+========================= */
+
+async function searchRooms() {
+
+    const location =
+        document.getElementById("searchLocation")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const type =
+        document.getElementById("searchType")
+        .value
+        .toLowerCase()
+        .trim();
+
+    try {
+
+        const response =
+            await fetch(`${API_URL}/rooms`);
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            throw new Error(
+                data.message || "Unable to search rooms"
+            );
+
+        }
+
+        let rooms =
+            data.rooms || data.data || [];
+
+        rooms = rooms.filter(room => {
+
+            const roomLocation =
+                String(
+                    room.location ||
+                    room.city ||
+                    ""
+                ).toLowerCase();
+
+            const roomType =
+                String(
+                    room.type ||
+                    room.roomType ||
+                    ""
+                ).toLowerCase();
+
+            const locationMatch =
+                !location ||
+                roomLocation.includes(location);
+
+            const typeMatch =
+                !type ||
+                roomType === type;
+
+            return locationMatch && typeMatch;
+
+        });
+
+        displayRooms(rooms);
+
+        document
+            .getElementById("rooms")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast("Unable to search rooms");
+
+    }
 
 }
 
@@ -268,20 +288,48 @@ function confirmBooking() {
    LOGIN MODAL
 ========================= */
 
-function showLogin() {
+function openLogin() {
 
-    document.getElementById("loginModal").classList.add("show");
+    closeModal("registerModal");
+
+    document
+        .getElementById("loginModal")
+        .classList
+        .add("show");
+
+}
+
+
+function switchToLogin() {
+
+    closeModal("registerModal");
+
+    openLogin();
 
 }
 
 
 /* =========================
-   LOGIN MESSAGE
+   REGISTER MODAL
 ========================= */
 
-function loginMessage() {
+function openRegister() {
 
-    showToast("Demo login: Backend authentication required.");
+    closeModal("loginModal");
+
+    document
+        .getElementById("registerModal")
+        .classList
+        .add("show");
+
+}
+
+
+function switchToRegister() {
+
+    closeModal("loginModal");
+
+    openRegister();
 
 }
 
@@ -292,47 +340,434 @@ function loginMessage() {
 
 function closeModal(modalId) {
 
-    document.getElementById(modalId).classList.remove("show");
+    document
+        .getElementById(modalId)
+        .classList
+        .remove("show");
 
 }
 
 
 /* =========================
-   CLOSE MODAL OUTSIDE
+   REGISTER
 ========================= */
 
-document.querySelectorAll(".modal").forEach(modal => {
+async function register(event) {
 
-    modal.addEventListener("click", function(event) {
+    event.preventDefault();
 
-        if (event.target === modal) {
+    const name =
+        document.getElementById("registerName")
+        .value
+        .trim();
 
-            modal.classList.remove("show");
+    const email =
+        document.getElementById("registerEmail")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("registerPassword")
+        .value;
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/auth/register`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        console.log("Register API:", data);
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Registration failed"
+            );
 
         }
 
-    });
+        showToast(
+            "Account created successfully!"
+        );
 
-});
+        document
+            .getElementById("registerModal")
+            .classList
+            .remove("show");
+
+        document
+            .querySelector("#registerModal form")
+            .reset();
+
+        setTimeout(() => {
+
+            openLogin();
+
+        }, 800);
+
+    } catch (error) {
+
+        console.error(
+            "Registration error:",
+            error
+        );
+
+        showToast(error.message);
+
+    }
+
+}
 
 
 /* =========================
-   TOAST MESSAGE
+   LOGIN
 ========================= */
 
-let toastTimer;
+async function login(event) {
+
+    event.preventDefault();
+
+    const email =
+        document.getElementById("loginEmail")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("loginPassword")
+        .value;
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/auth/login`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        console.log("Login API:", data);
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Login failed"
+            );
+
+        }
+
+        localStorage.setItem(
+            "token",
+            data.token
+        );
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(data.user)
+        );
+
+        showToast(
+            `Welcome ${data.user.name}!`
+        );
+
+        document
+            .getElementById("loginModal")
+            .classList
+            .remove("show");
+
+        document
+            .querySelector("#loginModal form")
+            .reset();
+
+        updateNavbar();
+
+    } catch (error) {
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+function checkLogin() {
+
+    const token =
+        localStorage.getItem("token");
+
+    if (token) {
+
+        updateNavbar();
+
+    }
+
+}
+
+
+/* =========================
+   UPDATE NAVBAR
+========================= */
+
+function updateNavbar() {
+
+    const userData =
+        localStorage.getItem("user");
+
+    if (!userData) {
+        return;
+    }
+
+    const user =
+        JSON.parse(userData);
+
+    const nav =
+        document.getElementById("navMenu");
+
+    nav.innerHTML = `
+
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#rooms">
+            Rooms
+        </a>
+
+        <a href="#about">
+            About
+        </a>
+
+        <span class="welcome-user">
+            👤 ${user.name}
+        </span>
+
+        <button
+            class="nav-login"
+            onclick="logout()">
+            Logout
+        </button>
+
+    `;
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout() {
+
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("user");
+
+    showToast("Logged out successfully");
+
+    setTimeout(() => {
+
+        location.reload();
+
+    }, 700);
+
+}
+
+
+/* =========================
+   BOOKING
+========================= */
+
+function openBooking(room) {
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+
+        showToast(
+            "Please login before booking"
+        );
+
+        openLogin();
+
+        return;
+
+    }
+
+    document.getElementById(
+        "bookingRoomId"
+    ).value =
+        room._id || room.id;
+
+    document.getElementById(
+        "bookingRoomName"
+    ).textContent =
+        room.name ||
+        room.title ||
+        room.roomType ||
+        "Selected Room";
+
+    document
+        .getElementById("bookingModal")
+        .classList
+        .add("show");
+
+}
+
+
+/* =========================
+   CREATE BOOKING
+========================= */
+
+async function createBooking(event) {
+
+    event.preventDefault();
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+
+        showToast(
+            "Please login first"
+        );
+
+        return;
+
+    }
+
+    const roomId =
+        document.getElementById("bookingRoomId")
+        .value;
+
+    const checkIn =
+        document.getElementById("checkIn")
+        .value;
+
+    const checkOut =
+        document.getElementById("checkOut")
+        .value;
+
+    const guests =
+        Number(
+            document.getElementById("guests")
+            .value
+        );
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/bookings`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    roomId,
+                    checkIn,
+                    checkOut,
+                    guests
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        console.log(
+            "Booking API:",
+            data
+        );
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "Booking failed"
+            );
+
+        }
+
+        showToast(
+            "Booking created successfully!"
+        );
+
+        closeModal("bookingModal");
+
+        document
+            .querySelector("#bookingModal form")
+            .reset();
+
+    } catch (error) {
+
+        console.error(
+            "Booking error:",
+            error
+        );
+
+        showToast(error.message);
+
+    }
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
 
 function showToast(message) {
 
-    const toast = document.getElementById("toast");
+    const toast =
+        document.getElementById("toast");
 
     toast.textContent = message;
 
     toast.classList.add("show");
 
-    clearTimeout(toastTimer);
-
-    toastTimer = setTimeout(() => {
+    setTimeout(() => {
 
         toast.classList.remove("show");
 
@@ -342,44 +777,20 @@ function showToast(message) {
 
 
 /* =========================
-   NEWSLETTER
+   CLOSE MODALS ON BACKDROP
 ========================= */
 
-function subscribe(event) {
+window.addEventListener(
+    "click",
+    function(event) {
 
-    event.preventDefault();
+        if (
+            event.target.classList.contains("modal")
+        ) {
 
-    const email = document.getElementById("email").value;
+            event.target.classList.remove("show");
 
-    showToast("🎉 Thank you for subscribing!");
-
-    console.log("Demo subscription:", email);
-
-    event.target.reset();
-
-}
-
-
-/* =========================
-   DATE VALIDATION
-========================= */
-
-const today = new Date().toISOString().split("T")[0];
-
-document.getElementById("checkin").min = today;
-
-document.getElementById("checkout").min = today;
-
-document.getElementById("checkin").addEventListener("change", function() {
-
-    const checkout = document.getElementById("checkout");
-
-    checkout.min = this.value;
-
-    if (checkout.value && checkout.value <= this.value) {
-
-        checkout.value = "";
+        }
 
     }
-
-});
+);
